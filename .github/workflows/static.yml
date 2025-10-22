@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sursajni Controller</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#111827">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/PbNcXHF/new-logo.jpg">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU3Vyc2FqbmkgQ29udHJvbGxlciIsInNob3J0X25hbWUiOiJTdXJzYWpuaSIsImRlc2NyaXB0aW9uIjoiQSBBcHAgdG8gY29udHJvbCBhbmQgY29uZmZpZ3VyZSB0aGUgU3Vyc2FqbmkgV2lyZWxlc3MgUHVtcCBDb250cm9sbGVyLiIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2kuaWJiLmNvL1BiTmNYSEYvbmV3LWxvZ28uanBnIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL2pwZWcifV0sInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzExMTgyNyIsInRoZW1lX2NvbG9yIjoiIzExMTgyNyJ9">
+
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* Define theme variables for easy switching */
+        .theme-dark {
+            --bg-main: #111827; --bg-content: #1f2937; --bg-card: #374151;
+            --text-primary: #f9fafb; --text-secondary: #d1d5db; --text-accent: #60a5fa;
+            --border-color: #4b5563; --accent-color: #3b82f6; --accent-hover: #60a5fa;
+            --status-ok: #22c55e; --status-warn: #f59e0b; --status-error: #ef4444;
+            --header-accent: #60a5fa; --text-label: #9ca3af; --text-help: #6b7280;
+        }
+        .theme-light {
+            --bg-main: #f3f4f6; --bg-content: #ffffff; --bg-card: #f9fafb;
+            --text-primary: #111827; --text-secondary: #4b5563; --text-accent: #1d4ed8;
+            --border-color: #e5e7eb; --accent-color: #2563eb; --accent-hover: #3b82f6;
+            --status-ok: #16a34a; --status-warn: #d97706; --status-error: #b91c1c;
+            --header-accent: #1e40af; --text-label: #6b7280; --text-help: #9ca3af;
+        }
+        .theme-oceanic {
+            --bg-main: #0c1a2e; --bg-content: #1a2a40; --bg-card: #283850;
+            --text-primary: #e0f2fe; --text-secondary: #94a3b8; --text-accent: #7dd3fc;
+            --border-color: #334155; --accent-color: #0ea5e9; --accent-hover: #38bdf8;
+            --status-ok: #34d399; --status-warn: #facc15; --status-error: #fb7185;
+            --header-accent: #38bdf8; --text-label: #94a3b8; --text-help: #64748b;
+        }
+        .theme-sunset {
+            --bg-main: #2d192b; --bg-content: #4c2a46; --bg-card: #5e3a5a;
+            --text-primary: #fee2e2; --text-secondary: #fbcfe8; --text-accent: #f9a8d4;
+            --border-color: #834c7d; --accent-color: #e11d48; --accent-hover: #f43f5e;
+            --status-ok: #fbbf24; --status-warn: #f97316; --status-error: #f43f5e;
+            --header-accent: #f472b6; --text-label: #e9d5ff; --text-help: #a8a29e;
+        }
+        .theme-forest {
+            --bg-main: #1a2e1d; --bg-content: #2a402d; --bg-card: #38503b;
+            --text-primary: #dcfce7; --text-secondary: #bbf7d0; --text-accent: #86efac;
+            --border-color: #4d6850; --accent-color: #22c55e; --accent-hover: #4ade80;
+            --status-ok: #4ade80; --status-warn: #facc15; --status-error: #fb923c;
+            --header-accent: #4ade80; --text-label: #a7f3d0; --text-help: #88a18b;
+        }
+        
+        /* Apply theme variables */
+        body {
+            position: relative;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://ik.imagekit.io/sursajni/c09adc47-7e0e-48df-9118-2646eeb32e77.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.2; /* Default opacity */
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+        .bg-content { background-color: var(--bg-content); }
+        .bg-card { background-color: var(--bg-card); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-accent { color: var(--text-accent); }
+        .text-header-accent { color: var(--header-accent); }
+        .text-label { color: var(--text-label); }
+        .text-help { color: var(--text-help); }
+        .border-color { border-color: var(--border-color); }
+        .accent-bg { background-color: var(--accent-color); }
+        .accent-text { color: var(--accent-color); }
+        .accent-hover:hover { background-color: var(--accent-hover); }
+        .status-ok { color: var(--status-ok); }
+        .status-warn { color: var(--status-warn); }
+        .status-error { color: var(--status-error); }
+        
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-input, .form-select, input[type=range] {
+            background-color: var(--bg-main); border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .form-input:focus, .form-select:focus, input[type=range]:focus {
+            outline: none; border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+        input[type=range]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Accordion Styling */
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+
+        /* Bottom Nav Bar styling */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background-color: var(--bg-content);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .nav-btn.active .nav-icon, .nav-btn.active .nav-text { color: var(--accent-color); }
+        .nav-btn.active { transform: translateY(-2px); }
+
+        /* Floating Save Button */
+        #floatingSaveBtn {
+            position: fixed;
+            bottom: 80px; /* Above the nav bar */
+            right: 16px;
+            z-index: 1050;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+
+    <!-- Main App Container -->
+    <div id="app" class="pb-24">
+        <!-- App Header -->
+        <header class="bg-content sticky top-0 z-50 p-4 flex justify-between items-center border-b border-color shadow-sm">
+            <div class="flex items-center space-x-3">
+                <img src="https://i.ibb.co/PbNcXHF/new-logo.jpg" alt="Logo" class="w-10 h-10 rounded-lg">
+                <div>
+                    <h1 class="text-xl font-bold text-primary">Sursajni Controller</h1>
+                    <p id="connectionStatus" class="text-xs text-status-error">Disconnected</p>
+                </div>
+            </div>
+            <button id="connectionSettingsBtn" class="text-secondary text-xl">
+                <i class="fas fa-wifi"></i>
+            </button>
+        </header>
+
+        <!-- Page Content -->
+        <main class="p-4">
+            <div id="page-status" class="page active"></div>
+            <div id="page-schedules" class="page"></div>
+            <div id="page-settings" class="page"></div>
+        </main>
+
+        <footer class="text-center text-xs text-secondary py-4">
+            <p>Developed by Sursajni Automations &copy; <span id="footer-year">2025</span>. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- Floating Save Button -->
+    <button id="floatingSaveBtn" onclick="saveAllSettings()" class="hidden w-16 h-16 rounded-full accent-bg text-white shadow-lg flex items-center justify-center text-2xl">
+        <i class="fas fa-save"></i>
+    </button>
+
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <div class="max-w-md mx-auto grid grid-cols-3">
+            <button class="nav-btn active p-3 flex flex-col items-center transition-all duration-200" onclick="showPage('status')">
+                <i class="nav-icon fas fa-chart-line text-xl text-secondary"></i>
+                <span class="nav-text text-xs mt-1 text-secondary">Status</span>
+            </button>
+            <button class="nav-btn p-3 flex flex-col items-center transition-all duration-200" onclick="showPage('schedules')">
+                <i class="nav-icon fas fa-calendar-alt text-xl text-secondary"></i>
+                <span class="nav-text text-xs mt-1 text-secondary">Schedules</span>
+            </button>
+            <button class="nav-btn p-3 flex flex-col items-center transition-all duration-200" onclick="showPage('settings')">
+                <i class="nav-icon fas fa-cog text-xl text-secondary"></i>
+                <span class="nav-text text-xs mt-1 text-secondary">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Modals and Overlays -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[2000]">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+    </div>
+    
+    <div id="connectionModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1500] p-4">
+        <div class="bg-card rounded-lg p-6 w-full max-w-sm shadow-xl">
+            <h2 class="text-lg font-bold mb-4">Connection Settings</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="deviceIp" class="text-sm text-secondary block mb-1">Device IP Address</label>
+                    <input type="text" id="deviceIp" placeholder="e.g., 192.168.4.1" class="form-input w-full p-2 rounded">
+                </div>
+                <div>
+                    <label for="username" class="text-sm text-secondary block mb-1">Username</label>
+                    <input type="text" id="username" value="admin" class="form-input w-full p-2 rounded">
+                </div>
+                <div class="relative">
+                    <label for="password" class="text-sm text-secondary block mb-1">Password</label>
+                    <input type="password" id="password" class="form-input w-full p-2 rounded pr-10">
+                    <button type="button" onclick="togglePasswordVisibility('password')" class="absolute inset-y-0 right-0 top-6 px-3 flex items-center text-secondary"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeModal('connectionModal')" class="px-4 py-2 rounded bg-gray-500 text-white">Cancel</button>
+                <button onclick="saveConnection()" class="px-4 py-2 rounded accent-bg text-white">Save & Connect</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1500] p-4">
+        <div class="bg-card p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 id="confirmModalTitle" class="text-xl font-bold text-status-warn mb-4">Confirm Action</h3>
+            <p id="confirmModalMessage" class="text-secondary mb-6">Are you sure?</p>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closeModal('confirmModal')" class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-semibold">Cancel</button>
+                <button id="confirmModalButton" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Calibration Modal -->
+    <div id="calibrationModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1500] p-4">
+        <div class="bg-card rounded-lg p-6 w-full max-w-sm shadow-xl">
+            <h2 class="text-lg font-bold mb-4 text-header-accent">Turbidity Auto-Calibration</h2>
+            <p id="calibrationMessage" class="text-secondary mb-4">Starting calibration process...</p>
+            <div id="calibrationProgressContainer" class="w-full bg-gray-600 rounded-full h-4 mb-4 hidden">
+                <div id="calibrationProgressBar" class="bg-accent-color h-4 rounded-full" style="width: 0%"></div>
+            </div>
+            <div id="calibrationResult" class="text-center mb-4 hidden">
+                <p>Clean Value: <span id="calibCleanResult"></span></p>
+                <p>Dirty Value: <span id="calibDirtyResult"></span></p>
+                <p class="font-bold mt-2">New Limit: <span id="calibLimitResult"></span></p>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="calibrationCloseBtn" onclick="closeModal('calibrationModal')" class="px-4 py-2 rounded bg-gray-500 text-white">Cancel</button>
+                <button id="calibrationActionBtn" class="px-4 py-2 rounded accent-bg text-white">Start</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-24 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">Message</div>
+
+    <!-- MAIN APP SCRIPT -->
+    <script>
+        // --- GLOBAL STATE & CONSTANTS ---
+        let liveDataInterval; // For calibration polling
+        const STATE = {
+            connection: { ip: '', auth: '' },
+            data: null,
+            pollInterval: null,
+            connected: false,
+        };
+        const CONSTANTS = {
+            pumpModeMap: ["SCHEDULE", "AUTO", "MANUAL", "WATER_SENSING"],
+            repeatTypeMap: ["EVERY_DAY", "ODD_DAY", "EVEN_DAY", "NO_REPEAT", "SPECIFIC_DATE"],
+            beepStyleMap: ["SILENT", "ALERT", "WARNING", "PULSE", "LONG", "SPARROW"],
+            profileMap: ["Level Indicator", "Monoblock", "Submersible", "Fully Automatic"],
+            themeMap: ["Dark", "Light", "Oceanic", "Sunset", "Forest"],
+            fontMap: ['HelvB14', '7x13', '6x12', 'ncenB08', 'ncenR10'],
+            tankLevelMap: {0: "Empty", 1: "25%", 2: "Half", 3: "75%", 4: "Full"},
+            statusIcons: {
+                'Time': 'fas fa-clock', 'Pump Mode': 'fas fa-cogs', 'Tank Level': 'fas fa-tint',
+                'Signal Strength': 'fas fa-signal', 'Pump': 'fas fa-power-off', 'Flow': 'fas fa-water',
+                'Dry Run': 'fas fa-exclamation-triangle', 'Sensor Error': 'fas fa-satellite-dish',
+                'Battery': 'fas fa-battery-half', 'Heartbeat': 'fas fa-heartbeat',
+                'Rem. Attempts': 'fas fa-redo-alt', 'Turbidity': 'fas fa-smog',
+                'Next Schedule': 'fas fa-stopwatch', 'Firmware': 'fas fa-code-branch',
+                'Device ID': 'fas fa-microchip', 'MAC Address': 'fas fa-ethernet',
+                'Chip Info': 'fas fa-memory', 'Free Heap': 'fas fa-server', 'Uptime': 'fas fa-hourglass-start'
+            }
+        };
+
+        // --- DOM Elements ---
+        const connectionSettingsBtn = document.getElementById('connectionSettingsBtn');
+        const connectionStatusEl = document.getElementById('connectionStatus');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const floatingSaveBtn = document.getElementById('floatingSaveBtn');
+
+        // --- CORE UI FUNCTIONS ---
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`page-${pageName}`).classList.add('active');
+            document.querySelector(`[onclick="showPage('${pageName}')"]`).classList.add('active');
+            
+            // Show/hide floating save button
+            if (pageName === 'settings') {
+                floatingSaveBtn.classList.remove('hidden');
+            } else {
+                floatingSaveBtn.classList.add('hidden');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? 'var(--status-error)' : 'var(--status-ok)';
+            toast.classList.remove('opacity-0', 'translate-y-20');
+            setTimeout(() => toast.classList.add('opacity-0', 'translate-y-20'), 3000);
+        }
+        
+        function openModal(modalId) { document.getElementById(modalId).classList.remove('hidden'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+        
+        function showLoading() { loadingOverlay.classList.remove('hidden'); }
+        function hideLoading() { loadingOverlay.classList.add('hidden'); }
+        
+        function showConfirmModal(title, message, onConfirmCallback) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalMessage').textContent = message;
+            const confirmBtn = document.getElementById('confirmModalButton');
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            newConfirmBtn.onclick = () => {
+                closeModal('confirmModal');
+                onConfirmCallback();
+            };
+            openModal('confirmModal');
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+        
+        function applyTheme(themeIndex) {
+            const themeClasses = ['theme-dark', 'theme-light', 'theme-oceanic', 'theme-sunset', 'theme-forest'];
+            document.body.className = themeClasses[themeIndex] || 'theme-dark';
+        }
+
+        // --- CONNECTION & API ---
+        function loadConnectionDetails() {
+            try {
+                const details = JSON.parse(localStorage.getItem('sursajniPwaConnection'));
+                if (details && details.ip) {
+                    document.getElementById('deviceIp').value = details.ip.replace(/^https?:\/\//, '');
+                    if (details.auth) {
+                        const [username, password] = atob(details.auth.split(' ')[1]).split(':');
+                        document.getElementById('username').value = username;
+                        document.getElementById('password').value = password;
+                    }
+                    return details;
+                }
+            } catch (e) { localStorage.removeItem('sursajniPwaConnection'); }
+            return null;
+        }
+
+        async function saveConnection() {
+            const ip = document.getElementById('deviceIp').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+            if (!ip) return showToast('IP Address is required', 'error');
+            STATE.connection.ip = `http://${ip}`;
+            STATE.connection.auth = `Basic ${btoa(`${document.getElementById('username').value}:${document.getElementById('password').value}`)}`;
+            localStorage.setItem('sursajniPwaConnection', JSON.stringify(STATE.connection));
+            closeModal('connectionModal');
+            showLoading();
+            await fetchAndUpdate(true);
+            hideLoading();
+        }
+
+        async function apiCall(endpoint, options = {}) {
+            if (!STATE.connection.ip) {
+                showToast('Connection not configured.', 'error');
+                return null;
+            }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            try {
+                const response = await fetch(`${STATE.connection.ip}${endpoint}`, {
+                    ...options,
+                    headers: { 'Authorization': STATE.connection.auth, ...options.headers },
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (response.status === 401) throw new Error('Authentication failed. Check username/password.');
+                if (!response.ok) throw new Error(await response.text() || `HTTP error! Status: ${response.status}`);
+                return response;
+            } catch (error) {
+                console.error(`API call to ${endpoint} failed:`, error);
+                let errorMessage = 'Connection failed.';
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Connection timed out. Check IP address & network.';
+                } else if (error.name === 'TypeError') {
+                    errorMessage = 'Network error. Is the device IP correct and on the same WiFi?';
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                if(STATE.connected || endpoint === '/get_settings') { // Show toast on initial failure too
+                    showToast(errorMessage, 'error');
+                }
+                setConnectionStatus(false);
+                return null;
+            }
+        }
+        
+        function setConnectionStatus(isConnected) {
+            STATE.connected = isConnected;
+            connectionStatusEl.textContent = isConnected ? `Connected` : 'Disconnected';
+            connectionStatusEl.className = `text-xs ${isConnected ? 'status-ok' : 'text-status-error'}`;
+            if (!isConnected && STATE.pollInterval) {
+                clearInterval(STATE.pollInterval);
+                STATE.pollInterval = null;
+            }
+        }
+
+        async function fetchAndUpdate(isInitialFetch = false) {
+            const response = await apiCall('/get_settings');
+            if (!response) {
+                if (isInitialFetch) openModal('connectionModal');
+                return;
+            }
+            try {
+                const data = await response.json();
+                const isFirstLoad = !STATE.data;
+                STATE.data = data;
+                setConnectionStatus(true);
+                
+                const isSettingsPageActive = document.getElementById('page-settings').classList.contains('active');
+
+                // To prevent unsaved user edits from being overwritten by the periodic refresh,
+                // only update the theme and settings form values on the initial fetch,
+                // or when the user is not on the settings page, or when an update is forced after saving.
+                if (!isSettingsPageActive || isInitialFetch) {
+                    applyTheme(data.webTheme);
+                }
+
+                renderStatusPage(data);
+                
+                if (isFirstLoad) {
+                    renderSettingsPage(data);
+                    renderSchedulesPage(data); // Render schedule page structure once
+                }
+                
+                if (!isSettingsPageActive || isInitialFetch) {
+                    updateSettingsPage(data); // Update all settings controls with latest data
+                }
+                updateSchedulesPage(data); // Update schedule values
+                
+                if (STATE.pollInterval) clearInterval(STATE.pollInterval);
+                const refreshMs = (data.webUiRefreshIntervalSec || 10) * 1000;
+                STATE.pollInterval = setInterval(fetchAndUpdate, Math.max(refreshMs, 5000));
+            } catch (error) {
+                console.error("Failed to parse data:", error);
+                showToast("Invalid data from device", "error");
+                setConnectionStatus(false);
+            }
+        }
+        
+        async function postAction(endpoint, body = null, forceUpdate = false) {
+            showLoading();
+            const options = { method: 'POST' };
+            if (body) {
+                options.body = body;
+            }
+            const response = await apiCall(endpoint, options);
+            if(response) {
+                showToast(await response.text());
+                await fetchAndUpdate(forceUpdate);
+            }
+            hideLoading();
+        }
+        
+        // --- UI RENDERING ---
+        function createCard(title, icon, content) {
+            return `<div class="bg-card rounded-lg shadow-md p-4"><h2 class="text-lg font-semibold mb-4 text-header-accent flex items-center"><i class="${icon} mr-3"></i>${title}</h2>${content}</div>`;
+        }
+
+        function createTankVisual(level) {
+            const levelPercentage = level * 25;
+            let waterColor = 'var(--accent-color)'; // Default color
+            if (levelPercentage <= 25) waterColor = 'var(--status-warn)';
+            if (levelPercentage === 0) waterColor = 'var(--status-error)';
+            
+            return `
+                <div class="flex flex-col items-center justify-center">
+                    <div class="w-24 h-48 bg-main border-2 border-color rounded-lg flex flex-col-reverse p-1 relative">
+                        <!-- Water element -->
+                        <div class="w-full rounded-b-md transition-all duration-500 ease-in-out" style="height: ${levelPercentage}%; background-color: ${waterColor};"></div>
+                        <!-- Text overlay -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-3xl font-bold text-primary" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">${levelPercentage}%</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-lg font-semibold text-secondary">${CONSTANTS.tankLevelMap[level]}</div>
+                </div>
+            `;
+        }
+
+        function renderStatusPage(data) {
+            const page = document.getElementById('page-status');
+            const statusItems = [
+                {label: 'Pump', value: data.pumpRunning ? 'ON' : 'OFF', class: data.pumpRunning ? 'status-ok' : ''},
+                {label: 'Pump Mode', value: CONSTANTS.pumpModeMap[data.pumpMode].replace('_', ' ')},
+                {label: 'Flow', value: data.flowOk ? 'OK' : 'NO', class: data.flowOk ? 'status-ok' : 'status-warn'},
+                {label: 'Dry Run', value: data.dryRunError ? 'ERROR' : 'OK', class: data.dryRunError ? 'status-error' : 'status-ok'},
+                {label: 'Sensor Error', value: data.sensorError.replace('SENSOR_ERROR_','').replace(/_/g,' '), class: data.sensorError !== 'SENSOR_ERROR_NONE' ? 'status-error' : 'status-ok'},
+                {label: 'Heartbeat', value: data.heartbeatExpired ? 'EXPIRED' : 'OK', class: data.heartbeatExpired ? 'status-error' : 'status-ok'},
+                {label: 'Signal Strength', value: `${data.signalStrength} dBm`, class: data.signalStrength <= -90 ? 'status-error' : data.signalStrength <= -80 ? 'status-warn' : 'status-ok'},
+                {label: 'Battery', value: `${data.batteryVoltage.toFixed(2)} V`},
+                {label: 'Next Schedule', value: data.nextSchedule || 'None'}
+            ];
+            const infoItems = [
+                {label: 'Firmware', value: data.firmwareVersion},
+                {label: 'Device ID', value: data.deviceId},
+                {label: 'MAC Address', value: data.macAddress},
+                {label: 'Chip Info', value: data.chipInfo},
+                {label: 'Free Heap', value: data.freeHeap},
+                {label: 'Uptime', value: data.uptime}
+            ];
+            const createStatusItem = (item) => `<div class="flex items-start space-x-3"><i class="${CONSTANTS.statusIcons[item.label] || 'fas fa-question-circle'} text-accent mt-1"></i><div><div class="text-secondary text-sm">${item.label}</div><div class="font-bold ${item.class || ''}">${item.value}</div></div></div>`;
+            const controlsContent = `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="postAction('/toggle_pump')" class="w-full py-3 rounded-lg font-bold text-white transition-all duration-300 ${data.pumpRunning ? 'bg-red-600' : 'bg-green-600'}">${data.pumpRunning ? 'Stop Pump' : 'Start Pump'}</button>
+                <button onclick="postAction('/reset_dry_run')" class="w-full py-3 rounded-lg font-bold text-white accent-bg">Reset Dry Run</button>
+                <button onclick="postAction('/reset_sensor_error')" class="w-full py-3 rounded-lg font-bold text-white accent-bg">Reset Sensor Err</button>
+            </div>`;
+
+            const statusCardContent = `
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-grow grid grid-cols-2 gap-4 content-start">
+                        ${statusItems.map(createStatusItem).join('')}
+                    </div>
+                    <div class="flex-shrink-0 mx-auto">
+                        ${createTankVisual(data.currentTankLevel)}
+                    </div>
+                </div>
+            `;
+
+            page.innerHTML = `<div class="space-y-6">
+                ${createCard('System Status', 'fas fa-chart-bar', statusCardContent)}
+                ${createCard('Controls', 'fas fa-gamepad', controlsContent)}
+                ${createCard('System Information', 'fas fa-info-circle', `<div class="grid grid-cols-2 gap-4 text-sm">${infoItems.map(createStatusItem).join('')}</div>`)}
+            </div>`;
+        }
+
+        function updateSettingsPage(data) {
+            const page = document.getElementById('page-settings');
+            if (!page.innerHTML) return; // Don't run if settings page hasn't been rendered.
+
+            const setValue = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+            const setChecked = (id, checked) => { const el = document.getElementById(id); if (el) el.checked = checked; };
+            const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+
+            // Profile
+            setValue('systemProfile', data.systemProfile);
+
+            // Pump
+            setValue('pumpMode', data.pumpMode);
+            setValue('startSensorLevel', data.startSensorLevel);
+            setValue('endSensorLevel', data.endSensorLevel - 1);
+            setValue('scheduleDurationMin', data.scheduleDurationMin);
+            setValue('primingTimeMs', data.primingTimeMs);
+            setChecked('forceScheduledRun', data.forceScheduledRun);
+            setChecked('manualModeSafetyLogicEnabled', data.manualModeSafetyLogicEnabled);
+
+            // Safety
+            setChecked('dryRunLogicEnabled', data.dryRunLogicEnabled);
+            setValue('dryRunDelayMin', data.dryRunDelayMin);
+            setChecked('retryLogicEnabled', data.retryLogicEnabled);
+            setValue('dryRunAttempts', data.dryRunAttempts);
+            setValue('retryIntervalMin', data.retryIntervalMin);
+            setChecked('sensorErrorBypassEnabled', data.sensorErrorBypassEnabled);
+            setChecked('autoResetDryRunOnWater', data.autoResetDryRunOnWater);
+            setValue('waterPresenceThreshold', data.waterPresenceThreshold);
+            setValue('waterSensingStartDelaySec', data.waterSensingStartDelaySec);
+            setValue('waterSensingStopDelaySec', data.waterSensingStopDelaySec);
+            
+            // Buzzer
+            setChecked('buzzerEnabled', data.buzzerEnabled);
+            setValue('buzzerVolume', data.buzzerVolume);
+            setText('volLabel', data.buzzerVolume);
+            setValue('dryRunBeepStyle', data.dryRunBeepStyle);
+            setValue('sensorErrorBeepStyle', data.sensorErrorBeepStyle);
+            setValue('lowBatteryBeepStyle', data.lowBatteryBeepStyle);
+            setValue('heartbeatExpiredBeepStyle', data.heartbeatExpiredBeepStyle);
+            setValue('tankEmptyBeepStyle', data.tankEmptyBeepStyle);
+            setValue('tankFullBeepStyle', data.tankFullBeepStyle);
+            setValue('dirtyWaterBeepStyle', data.dirtyWaterBeepStyle);
+
+            // Turbidity
+            setChecked('turbidityBypassEnabled', data.turbidityBypassEnabled);
+            setValue('turbidityTimeoutSec', data.turbidityTimeoutSec);
+            setValue('turbidityLimit', data.turbidityLimit);
+
+            // Display
+            setValue('oledTheme', data.oledTheme);
+            setValue('webTheme', data.webTheme);
+            setValue('webUiRefreshIntervalSec', data.webUiRefreshIntervalSec);
+            setText('refreshTimeLabel', data.webUiRefreshIntervalSec);
+            setValue('displayFontIndex', data.currentFontIndex);
+            setChecked('oledShowTime', data.oledShowTime);
+            setChecked('oledShowDate', data.oledShowDate);
+            setChecked('oledShowDay', data.oledShowDay);
+            setChecked('oledShowBattery', data.oledShowBattery);
+            
+            // Security
+            setValue('httpPassword', ''); // Always clear password field
+
+            // LoRa
+            setChecked('loraPowerOptimizationEnabled', data.loraPowerOptimizationEnabled);
+            const powerSlider = document.getElementById('transmitterTxPower');
+            if (powerSlider) {
+                powerSlider.disabled = data.loraPowerOptimizationEnabled;
+                setValue('transmitterTxPower', data.transmitterTxPower);
+                setText('txPowerLabel', data.transmitterTxPower);
+            }
+            setValue('transmitterAckAttempts', data.transmitterAckAttempts);
+            setText('ackAttemptsLabel', data.transmitterAckAttempts);
+            
+            // RTC
+            if (data.rtc) {
+                setValue('rtcYear', data.rtc.year);
+                setValue('rtcMonth', data.rtc.month);
+                setValue('rtcDay', data.rtc.day);
+                setValue('rtcHour', data.rtc.hour);
+                setValue('rtcMinute', data.rtc.minute);
+                setValue('rtcSecond', data.rtc.second);
+            }
+        }
+
+        // --- SCHEDULES PAGE REWORK ---
+        function renderSchedulesPage(data) {
+            const page = document.getElementById('page-schedules');
+            const scheduleOptions = data.schedules.map((s, i) => {
+                 const isBlank = s.hour === 0 && s.minute === 0 && s.year === 0;
+                 const label = isBlank ? `Schedule ${i + 1} (Not Set)` : `Schedule ${i + 1} (${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')})`;
+                 return `<option value="${i}">${label}</option>`;
+            }).join('');
+            
+            const repeatOptions = CONSTANTS.repeatTypeMap.map((type, i) => `<option value="${i}">${type.replace('_', ' ')}</option>`).join('');
+
+            page.innerHTML = `
+                <div class="bg-card p-4 rounded-lg shadow-md space-y-4">
+                    <h2 class="text-xl font-semibold text-header-accent">Edit Schedules</h2>
+                    
+                    <div>
+                        <label for="scheduleSelector" class="text-sm font-medium text-secondary block mb-1">Select Schedule to Edit</label>
+                        <select id="scheduleSelector" class="w-full p-2 rounded form-input">${scheduleOptions}</select>
+                    </div>
+
+                    <div id="scheduleEditForm" class="space-y-4 border-t border-color pt-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="schedHour" class="text-sm text-secondary block mb-1">Hour (0-23)</label>
+                                <input type="number" id="schedHour" min="0" max="23" class="form-input w-full p-2 rounded">
+                            </div>
+                            <div>
+                                <label for="schedMinute" class="text-sm text-secondary block mb-1">Minute (0-59)</label>
+                                <input type="number" id="schedMinute" min="0" max="59" class="form-input w-full p-2 rounded">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="schedRepeatType" class="text-sm text-secondary block mb-1">Repeat</label>
+                            <select id="schedRepeatType" class="form-input w-full p-2 rounded">${repeatOptions}</select>
+                        </div>
+                        <div id="scheduleDateFields" class="hidden grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="schedYear" class="text-sm text-secondary block mb-1">Year</label>
+                                <input type="number" id="schedYear" min="2024" max="2099" class="form-input w-full p-2 rounded">
+                            </div>
+                            <div>
+                                <label for="schedMonth" class="text-sm text-secondary block mb-1">Month</label>
+                                <input type="number" id="schedMonth" min="1" max="12" class="form-input w-full p-2 rounded">
+                            </div>
+                            <div>
+                                <label for="schedDay" class="text-sm text-secondary block mb-1">Day</label>
+                                <input type="number" id="schedDay" min="1" max="31" class="form-input w-full p-2 rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-3 gap-4">
+                    <button onclick="clearCurrentSchedule()" class="py-2 rounded-lg bg-yellow-600 text-white font-semibold">Clear This</button>
+                    <button onclick="saveCurrentSchedule()" class="py-2 rounded-lg accent-bg text-white font-semibold col-span-2">Save Schedule</button>
+                </div>
+                <div class="mt-4">
+                    <button onclick="clearAllSchedules()" class="w-full py-2 rounded-lg bg-red-700 text-white font-semibold">Clear All Schedules</button>
+                </div>
+            `;
+            
+            document.getElementById('scheduleSelector').addEventListener('change', e => updateSchedulesPage(STATE.data, e.target.value));
+            document.getElementById('schedRepeatType').addEventListener('change', e => {
+                 document.getElementById('scheduleDateFields').classList.toggle('hidden', e.target.value != CONSTANTS.repeatTypeMap.indexOf('SPECIFIC_DATE'));
+            });
+        }
+        
+        function updateSchedulesPage(data, selectedIndex) {
+            const selector = document.getElementById('scheduleSelector');
+            const currentIndex = selectedIndex !== undefined ? selectedIndex : (selector ? selector.value : 0);
+            
+            if (selector) { // Update selector labels on each data refresh
+                selector.innerHTML = data.schedules.map((s, i) => {
+                     const isBlank = s.hour === 0 && s.minute === 0 && s.year === 0;
+                     const label = isBlank ? `Schedule ${i + 1} (Not Set)` : `Schedule ${i + 1} (${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')})`;
+                     return `<option value="${i}">${label}</option>`;
+                }).join('');
+                selector.value = currentIndex;
+            }
+
+            const schedule = data.schedules[currentIndex];
+            const isBlank = schedule.hour === 0 && schedule.minute === 0 && schedule.year === 0;
+            const rtc = data.rtc;
+
+            if (isBlank && rtc) { // Auto-populate if blank
+                document.getElementById('schedHour').value = rtc.hour;
+                document.getElementById('schedMinute').value = rtc.minute;
+                const specificDateIndex = CONSTANTS.repeatTypeMap.indexOf('SPECIFIC_DATE');
+                document.getElementById('schedRepeatType').value = specificDateIndex;
+                document.getElementById('schedYear').value = rtc.year;
+                document.getElementById('schedMonth').value = rtc.month;
+                document.getElementById('schedDay').value = rtc.day;
+            } else { // Populate with existing data
+                document.getElementById('schedHour').value = schedule.hour;
+                document.getElementById('schedMinute').value = schedule.minute;
+                document.getElementById('schedRepeatType').value = CONSTANTS.repeatTypeMap.indexOf(schedule.repeatType);
+                document.getElementById('schedYear').value = schedule.year;
+                document.getElementById('schedMonth').value = schedule.month;
+                document.getElementById('schedDay').value = schedule.day;
+            }
+            // Toggle date fields visibility
+            const repeatIndex = document.getElementById('schedRepeatType').value;
+            document.getElementById('scheduleDateFields').classList.toggle('hidden', repeatIndex != CONSTANTS.repeatTypeMap.indexOf('SPECIFIC_DATE'));
+        }
+        
+        async function saveCurrentSchedule() {
+            const index = document.getElementById('scheduleSelector').value;
+            const body = new URLSearchParams();
+            body.append(`sched${index}Hour`, document.getElementById('schedHour').value);
+            body.append(`sched${index}Minute`, document.getElementById('schedMinute').value);
+            body.append(`sched${index}RepeatType`, CONSTANTS.repeatTypeMap[document.getElementById('schedRepeatType').value]);
+            body.append(`sched${index}Year`, document.getElementById('schedYear').value);
+            body.append(`sched${index}Month`, document.getElementById('schedMonth').value);
+            body.append(`sched${index}Day`, document.getElementById('schedDay').value);
+            await postAction('/update_all_settings', body, true);
+        }
+
+        function clearCurrentSchedule() {
+            const index = document.getElementById('scheduleSelector').value;
+            showConfirmModal(`Clear Schedule ${parseInt(index) + 1}?`, 'This action cannot be undone.', () => {
+                const body = new URLSearchParams({ action: 'clear_schedule', index: index });
+                postAction('/update_all_settings', body, true);
+            });
+        }
+        
+        function clearAllSchedules() {
+            showConfirmModal('Clear All Schedules?', 'This action cannot be undone.', () => {
+                postAction('/update_all_settings', new URLSearchParams({ action: 'clear_schedules' }), true);
+            });
+        }
+
+        // --- END SCHEDULES PAGE REWORK ---
+        
+        function renderSettingsPage(data) {
+            const page = document.getElementById('page-settings');
+            const createFormRow = (label, inputHtml, helpText = '') => `<div class="grid grid-cols-3 items-center gap-2 py-2"><label class="text-label col-span-1">${label}</label><div class="col-span-2">${inputHtml}${helpText ? `<p class="text-xs text-help mt-1">${helpText}</p>` : ''}</div></div>`;
+            const createToggle = (id, checked) => `<label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" name="${id}" id="${id}" class="sr-only peer" ${checked ? 'checked' : ''}><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-color)]"></div></label>`;
+            const createSelect = (id, options, selected) => `<select name="${id}" id="${id}" class="w-full p-2 rounded form-input">${options.map((opt, i) => `<option value="${i}" ${i == selected ? 'selected' : ''}>${opt.replace(/_/g, ' ')}</option>`).join('')}</select>`;
+            const createBeepSelect = (id, selected) => `<select name="${id}" id="${id}" class="w-full p-2 rounded form-input">${CONSTANTS.beepStyleMap.map(opt => `<option value="${opt}" ${opt == selected ? 'selected' : ''}>${opt.replace(/_/g, ' ')}</option>`).join('')}</select>`;
+            const createInput = (id, value, type='number', attrs='') => `<input type="${type}" name="${id}" id="${id}" value="${value}" class="w-full p-2 rounded form-input" ${attrs}>`;
+            const createRange = (id, value, min, max, labelId, attrs = '') => `<div class="flex items-center space-x-2"><input type="range" name="${id}" id="${id}" value="${value}" min="${min}" max="${max}" class="w-full" oninput="document.getElementById('${labelId}').textContent=this.value" ${attrs}><span id="${labelId}" class="w-8 text-center">${value}</span></div>`;
+
+            const profileContent = createFormRow('Profile', createSelect('systemProfile', CONSTANTS.profileMap, data.systemProfile), 'Select the primary function.');
+            const pumpContent = [
+                createFormRow('Pump Mode', createSelect('pumpMode', CONSTANTS.pumpModeMap, data.pumpMode)),
+                createFormRow('Start Level', createSelect('startSensorLevel', Object.values(CONSTANTS.tankLevelMap).slice(0, 4), data.startSensorLevel)),
+                createFormRow('End Level', createSelect('endSensorLevel', Object.values(CONSTANTS.tankLevelMap).slice(1).map((val, idx) => val), data.endSensorLevel - 1)),
+                createFormRow('Max Run Time', createInput('scheduleDurationMin', data.scheduleDurationMin, 'number', 'min="0"'), 'Minutes, 0 for unlimited.'),
+                createFormRow('Priming Time', createInput('primingTimeMs', data.primingTimeMs, 'number', 'min="100"'), 'Milliseconds'),
+                createFormRow('Force Schd Run', createToggle('forceScheduledRun', data.forceScheduledRun)),
+                createFormRow('ManualMode Safety', createToggle('manualModeSafetyLogicEnabled', data.manualModeSafetyLogicEnabled)),
+            ].join('');
+            const safetyContent = [
+                createFormRow('Dry Run Logic', createToggle('dryRunLogicEnabled', data.dryRunLogicEnabled)),
+                createFormRow('Dry Run Delay', createInput('dryRunDelayMin', data.dryRunDelayMin), 'Minutes'),
+                createFormRow('Retry Logic', createToggle('retryLogicEnabled', data.retryLogicEnabled)),
+                createFormRow('Retry Attempts', createInput('dryRunAttempts', data.dryRunAttempts)),
+                createFormRow('Attempt Interval', createInput('retryIntervalMin', data.retryIntervalMin), 'Minutes'),
+                createFormRow('Sensor Bypass', createToggle('sensorErrorBypassEnabled', data.sensorErrorBypassEnabled)),
+                createFormRow('Auto DR Reset', createToggle('autoResetDryRunOnWater', data.autoResetDryRunOnWater)),
+                `<div class="mt-4 border-t border-color pt-4 text-center font-bold text-header-accent">Water Sensing</div>`,
+                createFormRow('Water Threshold', createInput('waterPresenceThreshold', data.waterPresenceThreshold)),
+                createFormRow('Start Delay (s)', createInput('waterSensingStartDelaySec', data.waterSensingStartDelaySec)),
+                createFormRow('Stop Delay (s)', createInput('waterSensingStopDelaySec', data.waterSensingStopDelaySec)),
+            ].join('');
+            const buzzerContent = [
+                createFormRow('Buzzer', createToggle('buzzerEnabled', data.buzzerEnabled)),
+                createFormRow('Volume', createRange('buzzerVolume', data.buzzerVolume, 0, 255, 'volLabel')),
+                createFormRow('Dry Run Tone', createBeepSelect('dryRunBeepStyle', data.dryRunBeepStyle)),
+                createFormRow('Sensor Error Tone', createBeepSelect('sensorErrorBeepStyle', data.sensorErrorBeepStyle)),
+                createFormRow('Low Battery Tone', createBeepSelect('lowBatteryBeepStyle', data.lowBatteryBeepStyle)),
+                createFormRow('Heartbeat Tone', createBeepSelect('heartbeatExpiredBeepStyle', data.heartbeatExpiredBeepStyle)),
+                createFormRow('Tank Empty Tone', createBeepSelect('tankEmptyBeepStyle', data.tankEmptyBeepStyle)),
+                createFormRow('Tank Full Tone', createBeepSelect('tankFullBeepStyle', data.tankFullBeepStyle)),
+                createFormRow('Dirty Water Tone', createBeepSelect('dirtyWaterBeepStyle', data.dirtyWaterBeepStyle)),
+            ].join('');
+            const turbidityContent = [
+                createFormRow('Turbidity Bypass', createToggle('turbidityBypassEnabled', data.turbidityBypassEnabled)),
+                createFormRow('Turbidity Timeout (s)', createInput('turbidityTimeoutSec', data.turbidityTimeoutSec, 'number', 'min="1" max="60"')),
+                createFormRow('Turbidity Limit', createInput('turbidityLimit', data.turbidityLimit, 'number', 'min="0" max="4095"')),
+                `<div class="mt-4 border-t border-color pt-4 text-center">
+                    <div class="text-lg font-bold text-header-accent">Live Calibration</div>
+                    <div class="my-2">Live Reading: <span id="liveTurbidityValue" class="font-bold text-xl">...</span></div>
+                    <button onclick="setTurbidityLimitFromLive()" class="w-full py-2 rounded-lg accent-bg text-white mb-2">Set Limit to Live Value</button>
+                    <button onclick="startCalibration()" class="w-full py-2 rounded-lg bg-green-600 text-white">Start Auto-Calibrate</button>
+                 </div>`,
+            ].join('');
+            const displayContent = [
+                createFormRow('OLED Theme', createSelect('oledTheme', ['Dark', 'Light'], data.oledTheme)),
+                createFormRow('Web UI Theme', createSelect('webTheme', CONSTANTS.themeMap, data.webTheme)),
+                createFormRow('Web Refresh (s)', createRange('webUiRefreshIntervalSec', data.webUiRefreshIntervalSec, 5, 60, 'refreshTimeLabel')),
+                createFormRow('Display Font', createSelect('displayFontIndex', CONSTANTS.fontMap, data.currentFontIndex)),
+                `<div class="mt-4 border-t border-color pt-4 text-center font-bold text-header-accent">OLED Layout</div>`,
+                createFormRow('Show Time', createToggle('oledShowTime', data.oledShowTime)),
+                createFormRow('Show Date', createToggle('oledShowDate', data.oledShowDate)),
+                createFormRow('Show Day', createToggle('oledShowDay', data.oledShowDay)),
+                createFormRow('Show Battery', createToggle('oledShowBattery', data.oledShowBattery)),
+            ].join('');
+            const securityContent = createFormRow('Web Password', `<div class="relative w-full"><input type="password" name="httpPassword" id="httpPassword" placeholder="New password" class="w-full p-2 rounded form-input pr-10"><button type="button" onclick="togglePasswordVisibility('httpPassword')" class="absolute inset-y-0 right-0 px-3 flex items-center text-secondary"><i class="fas fa-eye"></i></button></div>`);
+            const loraContent = [
+                createFormRow('Pwr Optimize', createToggle('loraPowerOptimizationEnabled', data.loraPowerOptimizationEnabled), 'Automatically adjust transmitter power based on signal strength.'),
+                createFormRow('TX Power', createRange('transmitterTxPower', data.transmitterTxPower, 2, 20, 'txPowerLabel', data.loraPowerOptimizationEnabled ? 'disabled' : ''), data.loraPowerOptimizationEnabled ? 'Power is managed automatically.' : 'Sets the transmit power (2-20) for the remote sensor unit.'),
+                createFormRow('ACK Attempts', createRange('transmitterAckAttempts', data.transmitterAckAttempts, 1, 10, 'ackAttemptsLabel'), 'Number of times the transmitter will try to get an ACK from this receiver.')
+            ].join('');
+            const rtcContent = [
+                createFormRow('Year', createInput('rtcYear', data.rtc.year)),
+                createFormRow('Month', createInput('rtcMonth', data.rtc.month)),
+                createFormRow('Day', createInput('rtcDay', data.rtc.day)),
+                createFormRow('Hour', createInput('rtcHour', data.rtc.hour)),
+                createFormRow('Minute', createInput('rtcMinute', data.rtc.minute)),
+                createFormRow('Second', createInput('rtcSecond', data.rtc.second)),
+            ].join('');
+
+            const createAccordion = (id, title, icon, content) => {
+                return `<div class="border border-color rounded-lg"><button class="w-full flex justify-between items-center p-4 text-left" onclick="toggleAccordion('${id}')"><span class="font-semibold text-header-accent flex items-center"><i class="${icon} mr-3"></i>${title}</span><i id="icon-${id}" class="fas fa-chevron-down transform transition-transform"></i></button><div id="content-${id}" class="accordion-content"><div class="p-4 border-t border-color">${content}</div></div></div>`;
+            };
+
+            page.innerHTML = `<div class="space-y-4">
+                ${createAccordion('profile', 'System Profile', 'fas fa-user-cog', profileContent)}
+                ${createAccordion('pump', 'Pump Settings', 'fas fa-sliders-h', pumpContent)}
+                ${createAccordion('safety', 'Safety & Sensors', 'fas fa-shield-alt', safetyContent)}
+                ${createAccordion('buzzer', 'Buzzer & Alerts', 'fas fa-bell', buzzerContent)}
+                ${createAccordion('turbidity', 'Turbidity Sensor', 'fas fa-smog', turbidityContent)}
+                ${createAccordion('display', 'Display & Theme', 'fas fa-desktop', displayContent)}
+                ${createAccordion('lora', 'LoRa Settings', 'fas fa-broadcast-tower', loraContent)}
+                ${createAccordion('rtc', 'Time & Date (RTC)', 'fas fa-clock', rtcContent)}
+                ${createAccordion('security', 'Security', 'fas fa-lock', securityContent)}
+                <div class="bg-red-900/50 p-4 rounded-lg"><button onclick="factoryReset()" class="w-full py-2 rounded-lg bg-red-600 text-white font-bold">Factory Reset</button></div>
+            </div>`;
+            
+            // Correctly apply theme and opacity when the theme selector changes
+            document.getElementById('webTheme').addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+            });
+            // The 'oninput' attribute in the HTML for bgOpacity slider already handles live updates correctly.
+            // A redundant and buggy listener has been removed from here.
+
+
+            document.getElementById('loraPowerOptimizationEnabled').addEventListener('change', (e) => {
+                const powerSlider = document.getElementById('transmitterTxPower');
+                const helpTextElement = powerSlider.closest('.col-span-2').querySelector('.text-help');
+
+                powerSlider.disabled = e.target.checked;
+
+                if (helpTextElement) {
+                    if (e.target.checked) {
+                        helpTextElement.textContent = 'Power is managed automatically.';
+                    } else {
+                        helpTextElement.textContent = 'Sets the transmit power (2-20) for the remote sensor unit.';
+                    }
+                }
+            });
+
+            if (!liveDataInterval) {
+                liveDataInterval = setInterval(fetchLiveData, 2000);
+            }
+        }
+        
+        async function fetchLiveData() {
+             try {
+                const response = await apiCall('/get_live_data');
+                if(!response) return;
+                const data = await response.json();
+                const liveValueEl = document.getElementById('liveTurbidityValue');
+                if (liveValueEl) liveValueEl.textContent = data.turbidityValue;
+            } catch (error) {
+                console.error('Error fetching live data:', error);
+            }
+        }
+
+        async function setTurbidityLimitFromLive() {
+             const liveValue = document.getElementById('liveTurbidityValue').textContent;
+             if (!liveValue || isNaN(liveValue)) return showToast('Invalid live reading.', 'error');
+             const body = new URLSearchParams({ turbidityLimit: liveValue });
+             await postAction('/update_all_settings', body, true);
+        }
+
+        // --- ACTION HANDLERS ---
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            const isOpen = content.style.maxHeight;
+            document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+            document.querySelectorAll('[id^="icon-"]').forEach(i => i.classList.remove('rotate-180'));
+            if (!isOpen) {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.classList.add('rotate-180');
+            }
+        }
+        function factoryReset() { showConfirmModal('Factory Reset?', 'This will erase all settings.', () => postAction('/factory_reset', null, true)); }
+
+        // --- NEW: AUTO-CALIBRATION FUNCTIONS ---
+        let calibCleanValue, calibDirtyValue;
+
+        function startCalibration() {
+            const msgEl = document.getElementById('calibrationMessage');
+            const actionBtn = document.getElementById('calibrationActionBtn');
+            const closeBtn = document.getElementById('calibrationCloseBtn');
+            const progressContainer = document.getElementById('calibrationProgressContainer');
+            const resultEl = document.getElementById('calibrationResult');
+
+            // Reset UI
+            progressContainer.classList.add('hidden');
+            resultEl.classList.add('hidden');
+            actionBtn.disabled = false;
+            closeBtn.disabled = false;
+
+            // Start Step 1
+            msgEl.textContent = "Step 1: Dip sensor in CLEAN water, then press Start.";
+            actionBtn.textContent = "Start Clean Sample";
+            actionBtn.onclick = () => runCalibrationStep('clean');
+            openModal('calibrationModal');
+        }
+
+        async function runCalibrationStep(step) {
+            const msgEl = document.getElementById('calibrationMessage');
+            const actionBtn = document.getElementById('calibrationActionBtn');
+            const closeBtn = document.getElementById('calibrationCloseBtn');
+            const progressContainer = document.getElementById('calibrationProgressContainer');
+            const progressBar = document.getElementById('calibrationProgressBar');
+            
+            actionBtn.disabled = true;
+            closeBtn.disabled = true;
+            msgEl.textContent = `Sampling ${step} water for 5 seconds...`;
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            
+            const readings = [];
+            const sampleInterval = 250; // ms
+            const duration = 5000; // 5 seconds
+            const totalSamples = duration / sampleInterval;
+
+            for (let i = 0; i < totalSamples; i++) {
+                try {
+                    const response = await apiCall('/get_live_data');
+                    if(response) {
+                        const data = await response.json();
+                        readings.push(data.turbidityValue);
+                    }
+                } catch (e) { console.error(e); }
+                progressBar.style.width = `${((i + 1) / totalSamples) * 100}%`;
+                await new Promise(resolve => setTimeout(resolve, sampleInterval));
+            }
+            
+            const avg = Math.round(readings.reduce((a, b) => a + b, 0) / readings.length);
+
+            if (step === 'clean') {
+                calibCleanValue = avg;
+                document.getElementById('calibCleanResult').textContent = calibCleanValue;
+                msgEl.textContent = "Step 2: Dip sensor in DIRTY water, then press Start.";
+                actionBtn.textContent = "Start Dirty Sample";
+                actionBtn.onclick = () => runCalibrationStep('dirty');
+                actionBtn.disabled = false;
+                closeBtn.disabled = false;
+            } else { // 'dirty' step
+                calibDirtyValue = avg;
+                document.getElementById('calibDirtyResult').textContent = calibDirtyValue;
+                
+                // Calculate and save
+                const newLimit = Math.round(calibCleanValue + (calibDirtyValue - calibCleanValue) * 0.75);
+                document.getElementById('calibLimitResult').textContent = newLimit;
+
+                const body = new URLSearchParams();
+                body.append('calibratedCleanValue', calibCleanValue);
+                body.append('calibratedDirtyValue', calibDirtyValue);
+                body.append('turbidityLimit', newLimit);
+                await postAction('/update_all_settings', body, true);
+
+                msgEl.textContent = "Calibration Complete!";
+                document.getElementById('calibrationResult').classList.remove('hidden');
+                actionBtn.textContent = "Done";
+                actionBtn.onclick = () => closeModal('calibrationModal');
+                actionBtn.disabled = false;
+                closeBtn.disabled = true; // Only Done button should be active
+            }
+        }
+        
+        async function saveAllSettings() {
+            showLoading();
+            const formData = new URLSearchParams();
+            const settingsPage = document.getElementById('page-settings');
+            
+            settingsPage.querySelectorAll('input, select').forEach(el => {
+                // Use the 'name' attribute for form submissions, which is the web standard.
+                if (!el.name) return;
+
+                // If the password input is empty, don't include it in the request.
+                // This prevents the device from rejecting the entire settings batch.
+                if (el.name === 'httpPassword' && el.value === '') {
+                    return; 
+                }
+                
+                if (el.type === 'checkbox') {
+                    formData.append(el.name, el.checked ? '1' : '0');
+                } else if (el.name === 'endSensorLevel') {
+                    // The UI select element for End Level uses values 0-3.
+                    // The device's firmware expects these values to be 1-4.
+                    // We must add 1 to the value before sending it.
+                    formData.append(el.name, parseInt(el.value, 10) + 1);
+                } else {
+                    formData.append(el.name, el.value);
+                }
+            });
+            
+            await postAction('/update_all_settings', formData, true);
+            hideLoading();
+        }
+
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+            const connectionDetails = loadConnectionDetails();
+            connectionSettingsBtn.addEventListener('click', () => openModal('connectionModal'));
+            if (connectionDetails) {
+                STATE.connection = connectionDetails;
+                showLoading();
+                fetchAndUpdate(true).finally(hideLoading);
+            } else {
+                openModal('connectionModal');
+            }
+        });
+    </script>
+</body>
+</html>
+
