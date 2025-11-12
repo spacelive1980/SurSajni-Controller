@@ -92,6 +92,7 @@ Comprehensive documentation is available in the `SurSajni_ESP32/` folder:
 - **[QUICKSTART.md](SurSajni_ESP32/QUICKSTART.md)** - Get started in 10 minutes
 - **[WIRING.md](SurSajni_ESP32/WIRING.md)** - Detailed hardware connections
 - **[ARDUINO_TO_ESP32.md](SurSajni_ESP32/ARDUINO_TO_ESP32.md)** - Arduino conversion guide
+- **[FLASHING_AND_SECURITY.md](SurSajni_ESP32/FLASHING_AND_SECURITY.md)** - Flash firmware & encryption guide
 
 ## 🎯 Use Cases
 

@@ -311,6 +311,7 @@ Modify the settings or use the web interface to adjust:
 2. **Network Security:** Use WPA2 encryption for your WiFi
 3. **Firmware Updates:** Keep the firmware updated
 4. **Physical Access:** Secure the device to prevent unauthorized access
+5. **Firmware Protection:** See [FLASHING_AND_SECURITY.md](FLASHING_AND_SECURITY.md) for flash encryption and secure boot options to prevent firmware cloning
 
 ## License
 
