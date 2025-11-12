@@ -18,20 +18,31 @@ A comprehensive pump automation system with web-based control, multiple operatin
 
 ```
 SurSajni-Controller/
-├── index.html                 # Web interface (PWA)
-└── SurSajni_ESP32/           # ESP32 firmware
-    ├── SurSajni_ESP32.ino    # Main firmware file
-    ├── WebServer.ino         # Web server handlers
-    ├── README.md             # Detailed documentation
-    ├── QUICKSTART.md         # Quick start guide
-    ├── WIRING.md             # Hardware wiring guide
-    ├── ARDUINO_TO_ESP32.md   # Arduino conversion guide
-    └── platformio.ini        # PlatformIO configuration
+├── index.html                  # Web interface (PWA)
+├── SurSajni_ESP32/            # Arduino-ESP32 firmware
+│   ├── SurSajni_ESP32.ino     # Main firmware file
+│   ├── WebServer.ino          # Web server handlers
+│   ├── README.md              # Detailed documentation
+│   ├── QUICKSTART.md          # Quick start guide
+│   ├── WIRING.md              # Hardware wiring guide
+│   ├── ARDUINO_TO_ESP32.md    # Arduino conversion guide
+│   └── platformio.ini         # PlatformIO configuration
+└── SurSajni_ESP_IDF/          # ESP-IDF native firmware (NEW!)
+    ├── CMakeLists.txt         # Build configuration
+    ├── sdkconfig.defaults     # Default settings
+    ├── partitions.csv         # Partition table
+    ├── README.md              # ESP-IDF guide
+    └── main/                  # Source files
+        ├── main.c             # Entry point
+        ├── pump_control.c/h   # Pump control
+        ├── sensor_manager.c/h # Sensors
+        ├── wifi_manager.c/h   # WiFi
+        └── web_server.c/h     # Web API
 ```
 
 ## 🚀 Quick Start
 
-### For ESP32 (Recommended)
+### For ESP32 with Arduino Framework
 
 1. **Hardware:** Get an ESP32 development board
 2. **Software:** Install Arduino IDE and required libraries
@@ -40,6 +51,20 @@ SurSajni-Controller/
 5. **Configure:** Open http://192.168.4.1 in browser (login: admin/admin)
 
 See [SurSajni_ESP32/QUICKSTART.md](SurSajni_ESP32/QUICKSTART.md) for detailed instructions.
+
+### For ESP32 with ESP-IDF (Recommended for Production/Security)
+
+**Use ESP-IDF version when you need:**
+- ✅ **Flash encryption** (prevent firmware cloning)
+- ✅ **Secure boot** (prevent unauthorized firmware)
+- ✅ **Production security** (NVS encryption, bootloader protection)
+
+1. **Install ESP-IDF:** Follow instructions at https://docs.espressif.com/projects/esp-idf/
+2. **Build:** `cd SurSajni_ESP_IDF && idf.py build`
+3. **Flash:** `idf.py -p /dev/ttyUSB0 flash monitor`
+4. **Connect:** Same as Arduino version (192.168.4.1)
+
+See [SurSajni_ESP_IDF/README.md](SurSajni_ESP_IDF/README.md) for complete ESP-IDF guide including flash encryption setup.
 
 ### For Arduino (If you have Arduino .ino file)
 
@@ -86,6 +111,7 @@ See [SurSajni_ESP32/WIRING.md](SurSajni_ESP32/WIRING.md) for complete wiring dia
 
 ## 📖 Documentation
 
+### Arduino-ESP32 Version
 Comprehensive documentation is available in the `SurSajni_ESP32/` folder:
 
 - **[README.md](SurSajni_ESP32/README.md)** - Complete firmware documentation
@@ -93,6 +119,16 @@ Comprehensive documentation is available in the `SurSajni_ESP32/` folder:
 - **[WIRING.md](SurSajni_ESP32/WIRING.md)** - Detailed hardware connections
 - **[ARDUINO_TO_ESP32.md](SurSajni_ESP32/ARDUINO_TO_ESP32.md)** - Arduino conversion guide
 - **[FLASHING_AND_SECURITY.md](SurSajni_ESP32/FLASHING_AND_SECURITY.md)** - Flash firmware & encryption guide
+
+### ESP-IDF Version (Production/Security)
+Native ESP-IDF documentation in the `SurSajni_ESP_IDF/` folder:
+
+- **[README.md](SurSajni_ESP_IDF/README.md)** - Complete ESP-IDF guide with flash encryption & secure boot
+  - Flash encryption setup (development & production modes)
+  - Secure boot v2 implementation
+  - NVS encryption
+  - OTA encrypted updates
+  - Production deployment workflow
 
 ## 🎯 Use Cases
 
