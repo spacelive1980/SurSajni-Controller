@@ -30,6 +30,12 @@
 #define ADC_REFERENCE_V     3.3       // ESP32 ADC reference voltage
 #define BATTERY_DIVIDER_R   5.0       // Voltage divider ratio (adjust based on your circuit)
 
+// Note: ESP32 ADC has some limitations:
+// - ADC2 cannot be used when WiFi is active (use ADC1: GPIO32-39)
+// - ADC can be non-linear, especially at low and high ranges
+// - For accurate battery monitoring, consider using external ADC or calibration
+// - WiFi activity may cause slight ADC noise
+
 // ===== PIN DEFINITIONS (Adjust based on your hardware) =====
 #define PUMP_RELAY_PIN      26    // Pump control relay
 #define BUZZER_PIN          25    // Buzzer for alerts
@@ -837,6 +843,10 @@ void handleRetryLogic() {
 }
 
 // ===== BUZZER CONTROL =====
+// Note: Some beep patterns use blocking delays for simplicity.
+// For critical applications, consider implementing non-blocking beep sequences.
+// However, beeps are typically only played during error conditions or events,
+// so the brief blocking is acceptable for most use cases.
 void playBeep(uint8_t beepStyle) {
   if (!settings.buzzerEnabled) return;
   
@@ -853,6 +863,7 @@ void playBeep(uint8_t beepStyle) {
       tone(BUZZER_PIN, 1000, 500);
       break;
     case BEEP_PULSE:
+      // Note: Uses blocking delay for pulsing effect
       for (int i = 0; i < 3; i++) {
         tone(BUZZER_PIN, 2500, 100);
         delay(150);
@@ -862,6 +873,7 @@ void playBeep(uint8_t beepStyle) {
       tone(BUZZER_PIN, 1500, 1000);
       break;
     case BEEP_SPARROW:
+      // Note: Uses blocking delay for chirping effect
       for (int i = 0; i < 5; i++) {
         tone(BUZZER_PIN, 2000 + i * 200, 50);
         delay(70);
