@@ -23,6 +23,12 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <Adafruit_SSD1306.h>
+#include <SPIFFS.h>
+
+// ===== ADC CONSTANTS =====
+#define ADC_MAX_VALUE       4095.0    // 12-bit ADC
+#define ADC_REFERENCE_V     3.3       // ESP32 ADC reference voltage
+#define BATTERY_DIVIDER_R   5.0       // Voltage divider ratio (adjust based on your circuit)
 
 // ===== PIN DEFINITIONS (Adjust based on your hardware) =====
 #define PUMP_RELAY_PIN      26    // Pump control relay
@@ -194,6 +200,8 @@ String nextSchedule = "None";
 String deviceId = "";
 String macAddress = "";
 unsigned long pumpStartTime = 0;
+unsigned long pumpPrimingStartTime = 0;
+bool pumpPriming = false;
 unsigned long lastSensorRead = 0;
 unsigned long lastDisplayUpdate = 0;
 unsigned long lastLoRaCheck = 0;
@@ -235,6 +243,13 @@ void setup() {
   Serial.begin(115200);
   Serial.println("\n\n=== Sursajni Controller ESP32 ===");
   Serial.println("Firmware Version: 1.0.0-ESP32");
+  
+  // Initialize SPIFFS for web files
+  if (!SPIFFS.begin(true)) {
+    Serial.println("SPIFFS Mount Failed - will serve basic HTML");
+  } else {
+    Serial.println("SPIFFS mounted successfully");
+  }
   
   // Initialize preferences
   preferences.begin("sursajni", false);
@@ -581,10 +596,11 @@ void readSensors() {
   // Read turbidity sensor
   turbidityValue = analogRead(TURBIDITY_PIN);
   
-  // Read battery voltage (voltage divider: 0-3.3V = 0-4095)
-  // Assuming a voltage divider that scales 0-16.5V to 0-3.3V (5:1 ratio)
+  // Read battery voltage (voltage divider scales higher voltage to ADC range)
+  // Adjust BATTERY_DIVIDER_R constant based on your voltage divider circuit
+  // Example: For 0-16.5V scaled to 0-3.3V, use 5.0 (5:1 ratio)
   int batteryRaw = analogRead(BATTERY_PIN);
-  batteryVoltage = (batteryRaw / 4095.0) * 3.3 * 5.0;
+  batteryVoltage = (batteryRaw / ADC_MAX_VALUE) * ADC_REFERENCE_V * BATTERY_DIVIDER_R;
   
   // Read flow sensor (simplified - adjust based on your sensor)
   int flowRaw = analogRead(FLOW_SENSOR_PIN);
@@ -666,8 +682,21 @@ void controlPump() {
     shouldRun = false;
   }
   
+  // Handle priming phase (non-blocking)
+  if (pumpPriming) {
+    if (millis() - pumpPrimingStartTime >= settings.primingTimeMs) {
+      // Priming complete, turn on pump
+      digitalWrite(PUMP_RELAY_PIN, HIGH);
+      pumpRunning = true;
+      pumpPriming = false;
+      pumpStartTime = millis();
+      Serial.println("Pump started (priming complete)");
+    }
+    return; // Don't process other pump logic during priming
+  }
+  
   // Update pump state
-  if (shouldRun && !pumpRunning) {
+  if (shouldRun && !pumpRunning && !pumpPriming) {
     startPump();
   } else if (!shouldRun && pumpRunning) {
     stopPump();
@@ -683,23 +712,26 @@ void controlPump() {
 }
 
 void startPump() {
-  Serial.println("Starting pump");
-  
-  // Priming delay
   if (settings.primingTimeMs > 0) {
-    Serial.printf("Priming for %d ms\n", settings.primingTimeMs);
-    delay(settings.primingTimeMs);
+    // Start priming phase (non-blocking)
+    Serial.printf("Starting priming phase for %d ms\n", settings.primingTimeMs);
+    pumpPriming = true;
+    pumpPrimingStartTime = millis();
+    // Pump relay stays LOW during priming
+  } else {
+    // No priming, start immediately
+    Serial.println("Starting pump");
+    digitalWrite(PUMP_RELAY_PIN, HIGH);
+    pumpRunning = true;
+    pumpStartTime = millis();
   }
-  
-  digitalWrite(PUMP_RELAY_PIN, HIGH);
-  pumpRunning = true;
-  pumpStartTime = millis();
 }
 
 void stopPump() {
   Serial.println("Stopping pump");
   digitalWrite(PUMP_RELAY_PIN, LOW);
   pumpRunning = false;
+  pumpPriming = false;  // Cancel priming if active
 }
 
 // ===== SCHEDULE MANAGEMENT =====
@@ -929,4 +961,4 @@ void handleLoRaMessage() {
   }
 }
 
-// Continue in next part...
+// Web server handlers are in WebServer.ino

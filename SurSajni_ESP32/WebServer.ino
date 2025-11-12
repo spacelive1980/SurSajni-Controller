@@ -1,11 +1,9 @@
 /*
  * Web Server Handler Functions
  * This file contains all the web server route handlers for the Sursajni Controller
+ * 
+ * Note: SPIFFS.h is included in the main .ino file
  */
-
-// External HTML file - served from PROGMEM
-extern const char index_html_start[] asm("_binary_index_html_start");
-extern const char index_html_end[] asm("_binary_index_html_end");
 
 // ===== WEB SERVER SETUP =====
 void setupWebServer() {
